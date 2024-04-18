@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.adapter.MyAdapter
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.di.MyDataViewModel
+import com.example.weatherapp.pretoria.current.Weather
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
