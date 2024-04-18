@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.data.MyDataItem
 
-class MyAdapter (private val context: Context, var userList: List<MyDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+class MyAdapter (private val context: Context, var dataList: List<MyDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         var userId: TextView
@@ -27,15 +27,16 @@ class MyAdapter (private val context: Context, var userList: List<MyDataItem>): 
     }
 
     override fun getItemCount(): Int {
-        return userList.size
+        return dataList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.userId.text = userList[position].userId.toString()
-        holder.userId.text = userList[position].title
+        holder.userId.text = dataList[position].userId.toString()
+        holder.title.text = dataList[position].title
     }
 
-    fun setData(){
+    fun setData(newList: List<MyDataItem>){
+        dataList = newList
         notifyDataSetChanged()
     }
 }
