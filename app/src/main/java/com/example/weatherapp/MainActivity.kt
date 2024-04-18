@@ -25,16 +25,38 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dataViewModel.fetchMyData()
 
-        dataViewModel.myData.observe(this, Observer { currentWeather ->
-            // Update UI with the fetched weather data
-            binding.tvCityName.text = currentWeather.name
-            binding.tvTime.text = currentWeather.timezone.toString()
-            binding.tvTemp.text = currentWeather.main.temp.toString()
-            binding.windSpeedNumber.text = currentWeather.wind.speed.toString()
-            binding.humidityNumber.text = currentWeather.main.humidity.toString()
-        })
+
+
+
+
+        binding.btnJhb.setOnClickListener {
+
+            dataViewModel.fetchMyData()
+
+            dataViewModel.myData.observe(this, Observer { currentWeather ->
+                // Update UI with the fetched weather data
+                binding.tvCityName.text = currentWeather.name
+                binding.tvTime.text = currentWeather.timezone.toString()
+                binding.tvTemp.text = currentWeather.main.temp.toString()
+                binding.windSpeedNumber.text = currentWeather.wind.speed.toString()
+                binding.humidityNumber.text = currentWeather.main.humidity.toString()
+            })
+        }
+
+        binding.btnPta.setOnClickListener {
+
+            dataViewModel.fetchPretoriaData()
+
+            dataViewModel.myPretoriaData.observe(this, Observer { currentWeather ->
+                // Update UI with the fetched weather data
+                binding.tvCityName.text = currentWeather.name
+                binding.tvTime.text = currentWeather.timezone.toString()
+                binding.tvTemp.text = currentWeather.main.temp.toString()
+                binding.windSpeedNumber.text = currentWeather.wind.speed.toString()
+                binding.humidityNumber.text = currentWeather.main.humidity.toString()
+            })
+        }
 
 
     }
