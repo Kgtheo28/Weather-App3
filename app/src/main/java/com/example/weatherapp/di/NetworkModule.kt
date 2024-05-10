@@ -16,16 +16,10 @@ object NetworkModule {
 
     const val Base_Url = "https://api.openweathermap.org/data/2.5/"
 
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .build()
-    }
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Base_Url)
