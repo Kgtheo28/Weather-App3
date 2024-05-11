@@ -1,7 +1,10 @@
 package com.example.weatherapp
 
+import android.animation.ObjectAnimator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -49,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         dialog2.setContentView(forecastLayoutBinding.root)
 
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
-
 
         binding.imgSearch.setOnClickListener {
             dialog.show()
