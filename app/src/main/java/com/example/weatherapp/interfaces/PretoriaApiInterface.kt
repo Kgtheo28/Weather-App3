@@ -1,4 +1,4 @@
-package com.example.weatherapp.di
+package com.example.weatherapp.interfaces
 
 import com.example.weatherapp.current.CurrentWeather
 import com.example.weatherapp.pretoria.current.CurrentPretoriaWeather

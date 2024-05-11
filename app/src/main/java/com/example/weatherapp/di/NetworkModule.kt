@@ -1,5 +1,11 @@
 package com.example.weatherapp.di
 
+import android.app.Application
+import android.content.Context
+import com.example.weatherapp.interfaces.ApiInterface
+import com.example.weatherapp.interfaces.CapeTownInterface
+import com.example.weatherapp.interfaces.PretoriaApiInterface
+import com.example.weatherapp.repository.CurrentRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,20 +24,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Base_Url)
-            .client(okHttpClient)
             .build()
     }
+
 
     @Provides
     @Singleton
@@ -39,10 +38,26 @@ object NetworkModule {
         return retrofit.create(ApiInterface::class.java)
     }
 
+
     @Provides
     @Singleton
     fun providePretoriaApiInterface(retrofit: Retrofit): PretoriaApiInterface {
         return retrofit.create(PretoriaApiInterface::class.java)
     }
+
+    // Cape Town Current Weather Interface
+    @Provides
+    @Singleton
+    fun provideCapeTownCurrentInterface(retrofit: Retrofit): CapeTownInterface {
+        return retrofit.create(CapeTownInterface::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApplicationContext(application: Application): Context {
+        return application.applicationContext
+    }
+
+
 
 }

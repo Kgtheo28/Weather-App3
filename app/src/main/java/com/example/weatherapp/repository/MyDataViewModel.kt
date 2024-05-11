@@ -1,14 +1,16 @@
-package com.example.weatherapp.di
+package com.example.weatherapp.repository
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.weatherapp.R
+import com.example.weatherapp.cities.capeTown.ForecastData
 import com.example.weatherapp.current.CurrentWeather
-import com.example.weatherapp.current.Main
+import com.example.weatherapp.interfaces.ApiInterface
+import com.example.weatherapp.interfaces.CapeTownInterface
+import com.example.weatherapp.interfaces.PretoriaApiInterface
 import com.example.weatherapp.pretoria.current.CurrentPretoriaWeather
 import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.Call
@@ -21,11 +23,13 @@ class MyDataViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
+
     private val _myData = MutableLiveData<CurrentWeather>()
     val myData: LiveData<CurrentWeather> get() = _myData
 
     private val _myPretoriaData = MutableLiveData<CurrentPretoriaWeather>()
     val myPretoriaData: LiveData<CurrentPretoriaWeather> get() = _myPretoriaData
+
 
     fun fetchMyData() {
         apiInterface.getDataList(
@@ -44,6 +48,7 @@ class MyDataViewModel @Inject constructor(
                     } else {
                         Log.e("MyDataViewModel", "Failed to fetch Johannesburg data: ${response.message()}")
                     }
+
                 }
             }
 

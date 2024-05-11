@@ -1,5 +1,6 @@
-package com.example.weatherapp.di
+package com.example.weatherapp.interfaces
 
+import com.example.weatherapp.cities.capeTownCurrent.CapeTownCurrent
 import com.example.weatherapp.current.CurrentWeather
 import retrofit2.Call
 import retrofit2.Response
