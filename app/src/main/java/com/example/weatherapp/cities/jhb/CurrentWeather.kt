@@ -1,4 +1,4 @@
-package com.example.weatherapp.current
+package com.example.weatherapp.cities.jhb
 
 data class CurrentWeather(
     val base: String,

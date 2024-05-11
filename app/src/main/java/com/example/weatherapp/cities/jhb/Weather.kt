@@ -1,4 +1,4 @@
-package com.example.weatherapp.pretoria.current
+package com.example.weatherapp.cities.jhb
 
 data class Weather(
     val description: String,

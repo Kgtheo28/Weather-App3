@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
-import com.example.weatherapp.current.CurrentWeather
+import com.example.weatherapp.cities.jhb.CurrentWeather
 
 class CurrentCapeTownAdapter (private var data: List<CurrentWeather>) : RecyclerView.Adapter<CurrentCapeTownAdapter.ViewHolder>() {
 

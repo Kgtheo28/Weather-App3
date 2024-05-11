@@ -4,13 +4,10 @@ import android.app.Application
 import android.content.Context
 import com.example.weatherapp.interfaces.ApiInterface
 import com.example.weatherapp.interfaces.CapeTownInterface
-import com.example.weatherapp.interfaces.PretoriaApiInterface
-import com.example.weatherapp.repository.CurrentRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -38,12 +35,6 @@ object NetworkModule {
         return retrofit.create(ApiInterface::class.java)
     }
 
-
-    @Provides
-    @Singleton
-    fun providePretoriaApiInterface(retrofit: Retrofit): PretoriaApiInterface {
-        return retrofit.create(PretoriaApiInterface::class.java)
-    }
 
     // Cape Town Current Weather Interface
     @Provides
