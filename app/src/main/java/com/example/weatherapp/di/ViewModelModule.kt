@@ -12,7 +12,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 @Module
 @InstallIn(ViewModelComponent::class)
 object ViewModelModule {
-
     @Provides
     fun provideCurrentViewModel (
         repository: CurrentRepositoryImpl,

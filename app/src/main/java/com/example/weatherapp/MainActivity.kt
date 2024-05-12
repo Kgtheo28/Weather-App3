@@ -57,8 +57,6 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         }
 
-
-
         sheetLayoutBinding.button.setOnClickListener {
 
             val searchEditText = sheetLayoutBinding.editTextText2
@@ -66,7 +64,6 @@ class MainActivity : AppCompatActivity() {
             val cityName = searchEditText.text.toString()
             when (cityName) {
                 "Johannesburg " -> JHBWeather()
-                "Cape Town " -> getCapeTownData()
                 else -> Toast.makeText(this, "City not found",
                     Toast.LENGTH_SHORT).show()
             }
@@ -75,34 +72,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-    }
-
-    private fun getCapeTownData() {
-        currentViewModel.getCPTData()
-
-        currentViewModel.myData.observe(this, Observer { currentWeather ->
-            // Update UI with the fetched weather data
-
-            // Main Weather Details
-            binding.tvCityName.text = currentWeather.name
-            binding.tvTemp.text = "${currentWeather.main.temp}^C"
-            binding.tvDescription.text = currentWeather.weather[0].description
-
-            /// First Card View Layout Details
-            binding.humidityNumber.text = "${currentWeather.main.humidity}%"
-            binding.airQuality.text = currentWeather.main.pressure.toString()
-
-            // Second Card View Details
-            binding.minTempNumber.text = "${currentWeather.main.temp_min}^C"
-            binding.maxTempNumber.text = "${currentWeather.main.temp_max}^C"
-            //binding.uvNumber.text =
-
-            // Image Icon
-            val iconId = currentWeather.weather[0].icon
-            val imgUrl = "https://openweathermap.org/img/wn/$iconId.png"
-
-            Picasso.get().load(imgUrl).into(binding.imageView)
-        })
     }
 
     private fun JHBWeather() {

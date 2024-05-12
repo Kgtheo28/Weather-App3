@@ -3,7 +3,6 @@ package com.example.weatherapp.di
 import android.app.Application
 import android.content.Context
 import com.example.weatherapp.interfaces.ApiInterface
-import com.example.weatherapp.interfaces.CapeTownInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,13 +34,6 @@ object NetworkModule {
         return retrofit.create(ApiInterface::class.java)
     }
 
-
-    // Cape Town Current Weather Interface
-    @Provides
-    @Singleton
-    fun provideCapeTownCurrentInterface(retrofit: Retrofit): CapeTownInterface {
-        return retrofit.create(CapeTownInterface::class.java)
-    }
 
     @Provides
     @Singleton
