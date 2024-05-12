@@ -8,31 +8,31 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.R
 import com.example.weatherapp.cities.jhb.CurrentWeather
-import com.example.weatherapp.repository.CurrentRepositoryImpl
+import com.example.weatherapp.repository.CurrentWeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class CurrentViewModel @Inject constructor(
-    private val repositoryImpl: CurrentRepositoryImpl,
+@HiltViewModel
+class CurrentWeatherViewModel @Inject constructor(
+    private val repository: CurrentWeatherRepository,
     private val context: Context
 ) : ViewModel() {
 
     // Johannesburg
-    private val _myJoziData = MutableLiveData<CurrentWeather>()
-    val myJoziData: LiveData<CurrentWeather> get() = _myJoziData
+    private val _myData = MutableLiveData<CurrentWeather>()
+    val myData: LiveData<CurrentWeather> get() = _myData
 
     fun getJoziData(){
         viewModelScope.launch {
             try {
-                val response = repositoryImpl.getJohannesburgData("Johannesburg", "metric", context.getString(R.string.api_key))
-                _myJoziData.value = response
+                val response = repository.getData("Johannesburg", "metric", context.getString(R.string.api_key))
+                _myData.value = response
+                Log.e("CityWeatherData", "Retrieving Data was SUCCESSFUL")
             } catch (e: Exception) {
                 Log.e("CurrentViewModel", "Error fetching data", e)
             }
         }
     }
-
-
 }

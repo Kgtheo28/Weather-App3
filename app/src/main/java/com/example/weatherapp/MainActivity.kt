@@ -1,17 +1,14 @@
 package com.example.weatherapp
 
-import android.animation.ObjectAnimator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.databinding.BottomItemLayoutBinding
 import com.example.weatherapp.databinding.SheetLayoutBinding
-import com.example.weatherapp.viewModel.CurrentViewModel
+import com.example.weatherapp.viewModel.CurrentWeatherViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var forecastLayoutBinding: BottomItemLayoutBinding
 
     // ViewModel
-    private lateinit var currentViewModel: CurrentViewModel
+    private lateinit var currentWeatherViewModel: CurrentWeatherViewModel
 
     // Dialogs
     private lateinit var dialog: BottomSheetDialog
@@ -39,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        currentViewModel = ViewModelProvider(this).get(CurrentViewModel::class.java)
+        currentWeatherViewModel = ViewModelProvider(this).get(CurrentWeatherViewModel::class.java)
 
 
         sheetLayoutBinding = SheetLayoutBinding.inflate(layoutInflater)
@@ -76,9 +73,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun JHBWeather() {
 
-        currentViewModel.getJoziData()
+        currentWeatherViewModel.getJoziData()
 
-        currentViewModel.myJoziData.observe(this, Observer { currentWeather ->
+        currentWeatherViewModel.myData.observe(this, Observer { currentWeather ->
             // Update UI with the fetched weather data
 
 
@@ -104,7 +101,6 @@ class MainActivity : AppCompatActivity() {
             Picasso.get().load(imgUrl).into(binding.imageView)
         })
     }
-
 }
 
 

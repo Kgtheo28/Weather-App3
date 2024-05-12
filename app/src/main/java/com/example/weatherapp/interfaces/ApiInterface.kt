@@ -5,9 +5,8 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiInterface  {
-
     @GET("weather?")
-    suspend fun getDataList(
+    suspend fun getData(
         @Query("q") cityName: String,
         @Query("units") units: String,
         @Query("apiKey") apiKey: String

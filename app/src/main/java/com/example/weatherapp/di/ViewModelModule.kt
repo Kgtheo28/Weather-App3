@@ -1,8 +1,8 @@
 package com.example.weatherapp.di
 
 import android.content.Context
-import com.example.weatherapp.repository.CurrentRepositoryImpl
-import com.example.weatherapp.viewModel.CurrentViewModel
+import com.example.weatherapp.repository.CurrentWeatherRepository
+import com.example.weatherapp.viewModel.CurrentWeatherViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,9 +14,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 object ViewModelModule {
     @Provides
     fun provideCurrentViewModel (
-        repository: CurrentRepositoryImpl,
+        repository: CurrentWeatherRepository,
         @ApplicationContext context: Context
-    ): CurrentViewModel {
-        return CurrentViewModel( repository, context)
+    ): CurrentWeatherViewModel {
+        return CurrentWeatherViewModel( repository, context)
     }
 }
