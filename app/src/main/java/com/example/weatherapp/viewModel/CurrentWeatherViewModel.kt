@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.R
 import com.example.weatherapp.cities.jhb.CurrentWeather
-import com.example.weatherapp.repository.CurrentWeatherRepository
+import com.example.weatherapp.repository.RepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CurrentWeatherViewModel @Inject constructor(
-    private val repository: CurrentWeatherRepository,
+    private val repository: RepositoryImpl,
     private val context: Context
 ) : ViewModel() {
 

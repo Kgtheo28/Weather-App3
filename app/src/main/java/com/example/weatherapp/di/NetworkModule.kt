@@ -3,7 +3,6 @@ package com.example.weatherapp.di
 import android.app.Application
 import android.content.Context
 import com.example.weatherapp.interfaces.ApiInterface
-import com.example.weatherapp.repository.CurrentWeatherRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,4 +37,6 @@ object NetworkModule {
     fun provideApplicationContext(application: Application): Context {
         return application.applicationContext
     }
+
+
 }
