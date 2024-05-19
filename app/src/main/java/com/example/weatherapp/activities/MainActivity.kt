@@ -1,10 +1,12 @@
-package com.example.weatherapp
+package com.example.weatherapp.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.weatherapp.R
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.databinding.BottomItemLayoutBinding
 import com.example.weatherapp.databinding.SheetLayoutBinding
@@ -54,6 +56,24 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         }
 
+        binding.cardView1.setOnClickListener{
+            val intent = Intent(this, JohannesburgActivity::class.java)
+            // Start the new activity
+            startActivity(intent)
+        }
+        binding.cardView2.setOnClickListener{
+            val intent = Intent(this, PretoriaActivity::class.java)
+            // Start the new activity
+            startActivity(intent)
+        }
+        binding.cardView3.setOnClickListener{
+            val intent = Intent(this, CapeTownActivity::class.java)
+            // Start the new activity
+            startActivity(intent)
+        }
+
+
+        /*
         sheetLayoutBinding.button.setOnClickListener {
 
             val searchEditText = sheetLayoutBinding.editTextText2
@@ -68,39 +88,36 @@ class MainActivity : AppCompatActivity() {
             dialog.dismiss()
         }
 
-
-    }
-
-    private fun JHBWeather() {
+         */
 
         currentWeatherViewModel.getJoziData()
+        currentWeatherViewModel.getPretoriaData()
+        currentWeatherViewModel.getCapeTownData()
 
         currentWeatherViewModel.myData.observe(this, Observer { currentWeather ->
             // Update UI with the fetched weather data
+            binding.actualTempNumber.text = "${currentWeather.main.temp}C"
+            binding.minTempNumber.text = "${currentWeather.main.temp_max}C"
+            binding.maxTempNumber.text = "${currentWeather.main.temp_max}C"
+        })
 
+        currentWeatherViewModel.pretoriaData.observe(this, Observer { currentWeather ->
+            // Update UI with the fetched weather data
+            binding.actualPtaTempNumber.text = "${currentWeather.main.temp}C"
+            binding.minPtaTempNumber.text = "${currentWeather.main.temp_max}C"
+            binding.maxPtaTempNumber.text = "${currentWeather.main.temp_max}C"
 
-            // Main Weather Details
-            binding.tvCityName.text = currentWeather.name
-            binding.tvTemp.text = "${currentWeather.main.temp}^C"
-            binding.tvDescription.text = currentWeather.weather[0].description
+        })
 
-            /// First Card View Layout Details
-            binding.humidityNumber.text = "${currentWeather.main.humidity}%"
-            binding.airQuality.text = currentWeather.main.pressure.toString()
-
-            // Second Card View Details
-            binding.minTempNumber.text = "${currentWeather.main.temp_min}^C"
-            binding.maxTempNumber.text = "${currentWeather.main.temp_max}^C"
-            //binding.uvNumber.text =
-
-
-            // Image Icon
-            val iconId = currentWeather.weather[0].icon
-            val imgUrl = "https://openweathermap.org/img/wn/$iconId.png"
-
-            Picasso.get().load(imgUrl).into(binding.imageView)
+        currentWeatherViewModel.capeTownData.observe(this, Observer { currentWeather ->
+            // Update UI with the fetched weather data
+            binding.actualCptTempNumber.text = "${currentWeather.main.temp}C"
+            binding.minCptTempNumber.text = "${currentWeather.main.temp_max}C"
+            binding.maxCptTempNumber.text = "${currentWeather.main.temp_max}C"
         })
     }
+
+
 }
 
 
