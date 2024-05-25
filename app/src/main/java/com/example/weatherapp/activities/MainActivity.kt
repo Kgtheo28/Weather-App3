@@ -3,6 +3,9 @@ package com.example.weatherapp.activities
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.weatherapp.`object`.Network
 import com.example.weatherapp.R
-import com.example.weatherapp.cities.jhb2.JohannesburgCurrentWeather
 import com.example.weatherapp.data.WeatherEntity
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.databinding.BottomItemLayoutBinding
@@ -25,6 +28,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.ByteArrayOutputStream
 import java.util.Locale
 
 
@@ -110,10 +114,12 @@ class MainActivity : AppCompatActivity() {
         currentWeatherViewModel.getCapeTownData()
 
         binding.btnForecast.setOnClickListener {
-            addWeatherDataToRoomDatabase()
+            //addWeatherDataToRoomDatabase()
+            updateUI()
         }
 
 
+        /*
 
         currentWeatherViewModel.myData.observe(this, Observer { currentWeather ->
             // Update UI with the fetched weather data
@@ -121,6 +127,8 @@ class MainActivity : AppCompatActivity() {
             binding.minTempNumber.text = "${currentWeather.main.temp_max}C"
             binding.maxTempNumber.text = "${currentWeather.main.temp_max}C"
         })
+
+         */
 
 
         currentWeatherViewModel.pretoriaData.observe(this, Observer { currentWeather ->
@@ -153,6 +161,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
@@ -177,7 +187,7 @@ class MainActivity : AppCompatActivity() {
                                 binding.tvCityName.text = cityName
 
                                 when (cityName) {
-                                    "Johannesburg" -> JHBWeather()
+                                   // "Johannesburg" -> JHBWeather()
                                     "Pretoria" -> PTAWeather()
                                     "Cape Town" -> getCapeTownData()
                                 }
@@ -231,30 +241,100 @@ class MainActivity : AppCompatActivity() {
 
 
     // The New weather fetching and storing method
-    fun addData(cityName: String, actualTemp: Int, maxTemp: Int, minTemp: Int, description: String) {
-        val weatherData = WeatherEntity(0, cityName, actualTemp, maxTemp, minTemp, description)
-        currentWeatherViewModel.addWeatherDataToRoom(weatherData)
-        Toast.makeText(this, "Successfully added", Toast.LENGTH_LONG).show()
+
+    private fun updateUI() {
+        if (Network.isNetworkAvailable(applicationContext)) {
+            // Network is available, fetch data from API and update UI
+            fetchDataFromAPI()
+        } else {
+            // Network is not available, display data from Room database
+            displayDataFromDatabase()
+            Toast.makeText(this, "No Network", Toast.LENGTH_LONG).show()
+        }
     }
-    fun addWeatherDataToRoomDatabase() {
+
+    private fun displayDataFromDatabase() {
+        currentWeatherViewModel.roomData.observe(this, Observer { weatherList ->
+            if (weatherList != null && weatherList.isNotEmpty()) {
+                val weatherData = weatherList[0] // Assuming you only store one entry in the database
+                // Display weather data from Room database
+                binding.tvCityName.text = weatherData.cityName
+                binding.tvTemp.text = "${weatherData.actualTemp}C"
+                binding.actualTempNumber.text = "${weatherData.actualTemp}C"
+                binding.maxTempNumber.text = "${weatherData.maxTemp}C"
+                binding.minTempNumber.text = "${weatherData.minTemp}C"
+                binding.tvDescription.text = weatherData.description
+
+                // Convert byte array to bitmap and display
+                val bitmap = BitmapFactory.decodeByteArray(weatherData.imageData, 0, weatherData.imageData.size)
+                binding.imageView.setImageBitmap(bitmap)
+
+            } else {
+                // Handle case where no data is available in Room database
+                Toast.makeText(this, "No weather data available", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun fetchDataFromAPI() {
         currentWeatherViewModel.myData.observe(this, Observer { currentWeather ->
             // Update UI with the fetched weather data
             val cityName = currentWeather.name
-            val actualTemp = currentWeather.main.temp.toInt()
-            val maxTemp = currentWeather.main.temp_max.toInt()
-            val minTemp = currentWeather.main.temp_min.toInt()
-            val description = currentWeather.weather[0].description // Assuming weather is a list
+            val actualTemp = currentWeather.main.temp.toLong()
+            val maxTemp = currentWeather.main.temp_max.toLong()
+            val minTemp = currentWeather.main.temp_min.toLong()
+            val description = currentWeather.weather[0].description
+            // Image URL
+            val iconId = currentWeather.weather[0].icon
+            val imgUrl = "https://openweathermap.org/img/wn/$iconId.png"
+
+            Picasso.get().load(imgUrl).into(object : com.squareup.picasso.Target {
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    if (bitmap != null) {
+                        // Convert Bitmap to ByteArray
+                        val byteArrayOutputStream = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+                        val imageData = byteArrayOutputStream.toByteArray()
+
+                        // Add weather data including image to Room database
+                        addData(cityName, actualTemp, maxTemp, minTemp, description, imageData)
+                    }
+                }
+
+                override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
+                    Log.e("ImageDownload", "Failed to load image: ${e?.message}")
+                    Toast.makeText(this@MainActivity, "Failed to download image", Toast.LENGTH_SHORT).show()
+
+                }
+
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+
+                }
+
+            })
+
 
             // Display weather data in UI
             binding.tvCityName.text = cityName
-            binding.actualTempNumber.text = actualTemp.toString()
-            binding.tvMaxTemp.text = maxTemp.toString()
-            binding.minTempNumber.text = minTemp.toString()
+            binding.tvTemp.text = "${actualTemp}C"
+            binding.actualTempNumber.text = "${actualTemp}C"
+            binding.maxTempNumber.text = "${maxTemp}C"
+            binding.minTempNumber.text = "${minTemp}C"
+            binding.tvDescription.text = description
 
-            // Add weather data to Room database
-            addData(cityName, actualTemp, maxTemp, minTemp, description)
+            Picasso.get().load(imgUrl).into(binding.imageView)
+
         })
     }
+
+
+    fun addData(cityName: String, actualTemp: Long, maxTemp: Long, minTemp: Long, description: String, image: ByteArray) {
+        val weatherData = WeatherEntity(0, cityName, actualTemp, maxTemp, minTemp, description, image)
+        currentWeatherViewModel.addWeatherDataToRoom(weatherData)
+        Log.d("RoomDatabase", "Weather data added: $cityName, $actualTemp, $maxTemp, $minTemp, $description")
+        Toast.makeText(this, "Successfully added", Toast.LENGTH_LONG).show()
+    }
+
     // IT ENDS HERE
 }
 

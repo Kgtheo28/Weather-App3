@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.R
 import com.example.weatherapp.cities.cpt.CapeTownCurrentWeather
+import com.example.weatherapp.cities.cpt.Weather
 import com.example.weatherapp.cities.jhb2.JohannesburgCurrentWeather
 import com.example.weatherapp.cities.pta.PretoriaCurrentWeather
 import com.example.weatherapp.data.WeatherEntity
@@ -35,6 +36,8 @@ class CurrentWeatherViewModel @Inject constructor(
     // Cape Town
     private val _capeTownData = MutableLiveData<CapeTownCurrentWeather>()
     val capeTownData: LiveData<CapeTownCurrentWeather> get() = _capeTownData
+
+    val roomData: LiveData<List<WeatherEntity>> = repository.getAllWeatherData()
 
     fun getJoziData(){
         viewModelScope.launch {
@@ -71,23 +74,6 @@ class CurrentWeatherViewModel @Inject constructor(
             }
         }
     }
-
-    /*
-    fun getJoziData2() {
-        viewModelScope.launch {
-            try {
-                repository.getJohannesburgWeather("Johannesburg", "metric", context.getString(R.string.api_key)).observeForever {
-                    _myData.value = it
-                }
-                Log.e("CityWeatherData", "Retrieving Data was SUCCESSFUL")
-            } catch (e: Exception) {
-                Log.e("CurrentViewModel", "Error fetching data", e)
-            }
-        }
-    }
-
-     */
-
 
     // Weather Data to Room Database
     fun addWeatherDataToRoom(weatherEntity: WeatherEntity) {

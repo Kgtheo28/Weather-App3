@@ -46,13 +46,11 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideWeatherDatabase(@ApplicationContext context: Context): WeatherDatabase{
-        return Room.databaseBuilder(context, WeatherDatabase::class.java, "weather_database").build()
+        return Room.databaseBuilder(context, WeatherDatabase::class.java, "weather_database2").build()
     }
 
     @Provides
     fun provideWeatherDataDao(weatherDatabase: WeatherDatabase): WeatherDao {
         return weatherDatabase.weatherDao()
     }
-
-
 }
