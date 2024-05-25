@@ -1,7 +1,7 @@
 package com.example.weatherapp.interfaces
 
 import com.example.weatherapp.cities.cpt.CapeTownCurrentWeather
-import com.example.weatherapp.cities.jhb.CurrentWeather
+import com.example.weatherapp.cities.jhb2.JohannesburgCurrentWeather
 import com.example.weatherapp.cities.pta.PretoriaCurrentWeather
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -12,7 +12,7 @@ interface ApiInterface  {
         @Query("q") cityName: String,
         @Query("units") units: String,
         @Query("apiKey") apiKey: String
-    ): CurrentWeather
+    ): JohannesburgCurrentWeather
 
     @GET("weather?")
     suspend fun getPretoriaData(

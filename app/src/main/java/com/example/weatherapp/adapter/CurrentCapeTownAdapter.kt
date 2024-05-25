@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
-import com.example.weatherapp.cities.jhb.CurrentWeather
+import com.example.weatherapp.cities.jhb2.JohannesburgCurrentWeather
 
-class CurrentCapeTownAdapter (private var data: List<CurrentWeather>) : RecyclerView.Adapter<CurrentCapeTownAdapter.ViewHolder>() {
+class CurrentCapeTownAdapter (private var data: List<JohannesburgCurrentWeather>) : RecyclerView.Adapter<CurrentCapeTownAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cityNameTextView: TextView = itemView.findViewById(R.id.tv_weather_condition)
@@ -30,7 +30,7 @@ class CurrentCapeTownAdapter (private var data: List<CurrentWeather>) : Recycler
         return data.size
     }
 
-    fun setData(newData: List<CurrentWeather>) {
+    fun setData(newData: List<JohannesburgCurrentWeather>) {
         data = newData
         notifyDataSetChanged()
     }

@@ -8,10 +8,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.R
 import com.example.weatherapp.cities.cpt.CapeTownCurrentWeather
-import com.example.weatherapp.cities.jhb.CurrentWeather
+import com.example.weatherapp.cities.jhb2.JohannesburgCurrentWeather
 import com.example.weatherapp.cities.pta.PretoriaCurrentWeather
+import com.example.weatherapp.data.WeatherEntity
 import com.example.weatherapp.repository.RepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,8 +25,8 @@ class CurrentWeatherViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Johannesburg
-    private val _myData = MutableLiveData<CurrentWeather>()
-    val myData: LiveData<CurrentWeather> get() = _myData
+    private val _myData = MutableLiveData<JohannesburgCurrentWeather>()
+    val myData: LiveData<JohannesburgCurrentWeather> get() = _myData
 
     // Pretoria
     private val _pretoriaData = MutableLiveData<PretoriaCurrentWeather>()
@@ -67,6 +69,30 @@ class CurrentWeatherViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("CurrentViewModel", "Error fetching data", e)
             }
+        }
+    }
+
+    /*
+    fun getJoziData2() {
+        viewModelScope.launch {
+            try {
+                repository.getJohannesburgWeather("Johannesburg", "metric", context.getString(R.string.api_key)).observeForever {
+                    _myData.value = it
+                }
+                Log.e("CityWeatherData", "Retrieving Data was SUCCESSFUL")
+            } catch (e: Exception) {
+                Log.e("CurrentViewModel", "Error fetching data", e)
+            }
+        }
+    }
+
+     */
+
+
+    // Weather Data to Room Database
+    fun addWeatherDataToRoom(weatherEntity: WeatherEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.addWeatherData(weatherEntity)
         }
     }
 }
