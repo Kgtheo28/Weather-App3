@@ -1,10 +1,12 @@
 package com.example.weatherapp.activities
 
 import android.Manifest
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.location.Location
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapp.NetworkChangeReceiver
 import com.example.weatherapp.`object`.NetworkUtils
 import com.example.weatherapp.R
 import com.example.weatherapp.adapter.WeatherAdapter
@@ -34,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     // Binding Layouts
     private lateinit var binding: ActivityMainBinding
     private lateinit var sheetLayoutBinding: SheetLayoutBinding
-    private lateinit var forecastLayoutBinding: BottomItemLayoutBinding
 
     // Weather Adapter
     private lateinit var weatherAdapter: WeatherAdapter
@@ -44,12 +46,13 @@ class MainActivity : AppCompatActivity() {
 
     // Dialogs
     private lateinit var dialog: BottomSheetDialog
-    private lateinit var dialog2: BottomSheetDialog
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     companion object {
         private const val REQUEST_LOCATION_PERMISSION = 1
     }
+
+    private lateinit var networkChangeReceiver: NetworkChangeReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,13 +63,10 @@ class MainActivity : AppCompatActivity() {
 
 
         sheetLayoutBinding = SheetLayoutBinding.inflate(layoutInflater)
-        forecastLayoutBinding = BottomItemLayoutBinding.inflate(layoutInflater)
 
         dialog = BottomSheetDialog(this, R.style.BottomSheetTheme,)
-        dialog2 = BottomSheetDialog(this, R.style.BottomSheetTheme)
 
         dialog.setContentView(sheetLayoutBinding.root)
-        dialog2.setContentView(forecastLayoutBinding.root)
 
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
 
@@ -84,21 +84,7 @@ class MainActivity : AppCompatActivity() {
             Log.e("location status", "Location not found")
         }
 
-        // Checking network Status
-        currentWeatherViewModel.networkStatus.observe(this, Observer { isNetworkAvailable ->
-            if (!isNetworkAvailable) {
-                Log.e("Checking Internet", "Internet Connection available ")
-                updateData()
-                multipleCitiesWeather()
-            } else {
-                Log.e("Checking Internet", "No internet connection")
-                displayDataFromDatabase()
-            }
-        })
-
-        updateData()
-
-
+        // Search weather Data of any city
         sheetLayoutBinding.button.setOnClickListener {
 
             val searchEditText = sheetLayoutBinding.editTextText2
@@ -118,8 +104,38 @@ class MainActivity : AppCompatActivity() {
             dialog.dismiss()
         }
 
+        // Create and register the BroadcastReceiver
+        // Checking network Status
+        networkChangeReceiver = NetworkChangeReceiver { isConnected ->
+            currentWeatherViewModel.setConnectionStatus(isConnected)
+        }
+        val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, intentFilter)
+
+        // Observe the network connection status
+        currentWeatherViewModel.isConnected.observe(this, Observer { isConnected ->
+            // Update the UI based on network connection status
+            if (isConnected) {
+                updateData()
+            } else {
+                displayDataFromDatabase()
+            }
+        })
+
     }
 
+    // Request Location Permission
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                getLastLocation()
+            } else {
+                // Permission denied
+                Log.e("Location Permission", "Retrieving Location was unsuccessful")
+            }
+        }
+    }
 
     private fun updateData() {
         if (NetworkUtils.isNetworkAvailable(applicationContext)) {
@@ -175,7 +191,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // When there is Internet Connection
+    // Automatic weather data from your current location
     private fun getLastLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation
@@ -189,7 +205,6 @@ class MainActivity : AppCompatActivity() {
                                 val cityName = addresses[0].locality ?: "City not found"
                                 val units = "metric"
                                 val apiKey = getString(R.string.api_key)
-
 
                                 currentWeatherViewModel.fetchWeatherFromAPI2(cityName, units, apiKey)
 
@@ -215,16 +230,11 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                getLastLocation()
-            } else {
-                // Permission denied
-                Log.e("Location Permission", "Retrieving Location was unsuccessful")
-            }
-        }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(networkChangeReceiver)
     }
 }
 

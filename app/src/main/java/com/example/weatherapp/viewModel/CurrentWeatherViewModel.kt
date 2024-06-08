@@ -30,14 +30,19 @@ class CurrentWeatherViewModel @Inject constructor(
 
     val roomData: LiveData<List<WeatherEntity>> = repository.getAllWeatherData()
 
-    val networkStatus: MutableLiveData<Boolean> = MutableLiveData()
-
     val apiData = MutableLiveData<CurrentWeather2>()
     val currentWeather: LiveData<CurrentWeather2>
         get() = apiData
 
     val apiData2 = MutableLiveData<List<CurrentWeather2>>()
     val errorMessage = MutableLiveData<String>()
+
+    private val _isConnected = MutableLiveData<Boolean>()
+    val isConnected: LiveData<Boolean> get() = _isConnected
+
+    fun setConnectionStatus(isConnected: Boolean) {
+        _isConnected.value = isConnected
+    }
 
 
 
